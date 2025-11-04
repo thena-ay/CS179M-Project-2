@@ -81,7 +81,7 @@ if __name__ == '__main__':
             data = vf(datapath, sep = " ")
             dist, order, over_time = to(data, s)
             while len(over_time) < s:
-                over_time = np.append(over_time[len(over_time) - 1], dist)
+                over_time = np.append(over_time[len(over_time) - 1], over_time)
             distances.append(over_time)
 
             # save in case something goes wrong mid trial
