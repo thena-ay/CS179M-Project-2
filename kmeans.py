@@ -73,10 +73,22 @@ def assign_points(data, centers):
         buckets[center].append(i)
 
     return buckets
-            
+
+# calculate mean squared error as objective function
+def objective_func(buckets, data, centers):
+    k = len(centers)
+
+    sq_errors = []
+    for i in range(k):
+        # mean squared error euclidean distance
+        sq_error = np.average(np.sqrt(np.sum((data[buckets[i],:] - centers[i,:])**2, axis=1))**2)
+        sq_errors.append(sq_error)
+    sq_errors = np.hstack(sq_errors)
+    return np.average(sq_errors)
+
 if __name__ == '__main__':
     # toy example from cs171
-    centers = np.array([[1,3], [2, 2]])
+    centers = np.array([[1,3], [3, 2]])
     data = np.array([[0, 1], [1, 2], [2, 0], [2, 2], [2, 3], [3, 1], [4, 0], [4, 2]])
 
     prev_buckets = assign_points(data, centers)
@@ -84,11 +96,12 @@ if __name__ == '__main__':
 
     change = True
     while change:
+        print(objective_func(prev_buckets, data, centers))
         # move centers based on points and reassign points
         centers = update_centers(prev_buckets, data)
         print(centers)
         buckets = assign_points(data, centers)
-
+        print(buckets)
         # check if any points have been reassigned
         if buckets == prev_buckets:
             change = False
