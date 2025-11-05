@@ -15,7 +15,6 @@ def two_opt(data, period):
     # BSF /initial tour from NN
     dist_mat = create_dist_matrix(data)
     BSF_dist, BSF_order = nnh(dist_mat.copy(), False)
-    dist = BSF_dist
     order = BSF_order.copy()
     # ensure the tour is closed and the distance matches the distance matrix
     BSF_dist = sum(dist_mat[BSF_order[k], BSF_order[k+1]] for k in range(len(BSF_order) - 1))
@@ -65,18 +64,18 @@ def two_opt_test(data, period):
     # BSF /initial tour from NN
     dist_mat = create_dist_matrix(data)
     BSF_dist, BSF_order = nnh(dist_mat.copy(), False)
-    dist = BSF_dist
     order = BSF_order.copy()
-    # ensure the tour is closed and the distance matches the distance matrix
-    BSF_dist = sum(dist_mat[BSF_order[k], BSF_order[k+1]] for k in range(len(BSF_order) - 1))
     dist_over_time = []
     time_limit = time.time() + period
+    counter = 1
     while time.time() < time_limit:
+        print(f"2-OPT iteration {counter}")
         dist, order, samples = two_opt_helper_test(dist_mat.copy(), order, BSF_dist, time_limit)
         dist_over_time = np.concatenate((dist_over_time, samples), axis=0)
         if dist < BSF_dist:
             BSF_dist = dist
             BSF_order = order
+        counter += 1
         _, order = nnh(dist_mat.copy(), True)
     return BSF_dist, BSF_order, dist_over_time
 
@@ -87,13 +86,14 @@ def two_opt_helper_test(dist_mat, order, global_best, time_limit):
     BSF_order = order
     BSF_dist = sum(dist_mat[BSF_order[k], BSF_order[k+1]] for k in range(len(BSF_order) - 1))
     prev_time = time.time()
-    dist_over_time = []
+    dist_over_time = [global_best]  # record actual best-so-far
     while good_delta:
         good_delta = False
         for i in range(n):
             j = i + 2
             if time.time() > prev_time + 1:
-                dist_over_time.append(BSF_dist)
+                print(f"\t\tCurrent best distance: {global_best:.1f}")
+                dist_over_time.append(global_best)  
                 prev_time = time.time()
             while j < n and time.time() < time_limit:
                 new_order1 = BSF_order[:i+1]
@@ -106,6 +106,8 @@ def two_opt_helper_test(dist_mat, order, global_best, time_limit):
                     good_delta = True
                     BSF_order = new_order_final
                     BSF_dist = new_dist
+                    if BSF_dist < global_best:
+                        global_best = BSF_dist
 
                 j += 1
             if time.time() > time_limit:
