@@ -1,0 +1,6 @@
+[submodule "CS179M-Project-2/CS179M-Project-1"]
+	path = CS179M-Project-2/CS179M-Project-1
+	url = https://github.com/JonathanSetiabudi/CS179M-Project-1.git
+[submodule "TSP"]
+	path = TSP
+	url = https://github.com/thena-ay/TSP.git
