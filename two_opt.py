@@ -18,7 +18,6 @@ def two_opt(data, period):
     order = BSF_order.copy()
     # ensure the tour is closed and the distance matches the distance matrix
     BSF_dist = sum(dist_mat[BSF_order[k], BSF_order[k+1]] for k in range(len(BSF_order) - 1))
-    print(f"\t\t{BSF_dist:.1f}")
     time_limit = time.time() + period
     while time.time() < time_limit:
         dist, order = two_opt_helper(dist_mat.copy(), order, BSF_dist)
@@ -67,9 +66,7 @@ def two_opt_test(data, period):
     order = BSF_order.copy()
     dist_over_time = []
     time_limit = time.time() + period
-    counter = 1
     while time.time() < time_limit:
-        print(f"2-OPT iteration {counter}")
         dist, order, samples = two_opt_helper_test(dist_mat.copy(), order, BSF_dist, time_limit)
         dist_over_time = np.concatenate((dist_over_time, samples), axis=0)
         if dist < BSF_dist:
@@ -92,7 +89,6 @@ def two_opt_helper_test(dist_mat, order, global_best, time_limit):
         for i in range(n):
             j = i + 2
             if time.time() > prev_time + 1:
-                print(f"\t\tCurrent best distance: {global_best:.1f}")
                 dist_over_time.append(global_best)  
                 prev_time = time.time()
             while j < n and time.time() < time_limit:
