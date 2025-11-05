@@ -72,7 +72,6 @@ def two_opt_test(data, period):
         if dist < BSF_dist:
             BSF_dist = dist
             BSF_order = order
-        counter += 1
         _, order = nnh(dist_mat.copy(), True)
     return BSF_dist, BSF_order, dist_over_time
 

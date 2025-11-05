@@ -77,7 +77,7 @@ if __name__ == '__main__':
         distances = []
 
         for i in range(t):
-            datapath = f"rw1621_25051.txt"
+            datapath = f"ca4663_1290319.txt"
             data = vf(datapath, sep = " ")
             dist, order, over_time = to(data, s)
             while len(over_time) < s:
@@ -93,15 +93,33 @@ if __name__ == '__main__':
             if i != 0:
                 os.remove(f"{output}_trial{i}.txt")
                 os.remove(f"{output}_trial{i}_average.txt")
-
-    # visualization of distances over time
+    
+    # run Kmeans 10 times and take the minimum objective function value and plot it
     if False:
-        print()
-
-    # visualization of unit square optimality test
-    if False:
-        print()
-
-
-   
-        
+        maxK = 6
+        trials = 10
+        datapath = f"ca4663_1290319.txt"
+        data = vf(datapath, sep = " ")
+        best_objs = []
+        for k in range(1, maxK + 1):
+            best_obj = float('inf')
+            best_centers = None
+            best_buckets = None
+            for t in range(trials):
+                from kmeans import kmeans
+                centers, obj = kmeans(data, k)
+                if obj < best_obj:
+                    best_obj = obj
+                    best_centers = centers
+                    # assign points to buckets for best run
+                    from kmeans import assign_points
+                    best_buckets = assign_points(data, best_centers)
+            print(f"Best objective function value for k={k}: {best_obj}")
+            best_objs.append(best_obj)
+        k_values = list(range(1, maxK + 1))
+        plt.plot(k_values, best_objs, marker='o')
+        plt.title(f'K vs Kmeans Min Objective Function Value for {trials} Trials')
+        plt.xlabel('K value')
+        plt.ylabel('Objective Function Value (Lower is Better)')
+        plt.xticks(k_values)
+        plt.show()
