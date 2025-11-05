@@ -10,7 +10,8 @@ def kmeans(data, k):
     '''
     #TODO: more research on kmeans initialization
     # initialize centers (random points from data set)
-    centers = np.random.choice(data, size=k, replace=False)
+    chosen = np.random.choice(data.shape[0], size=k, replace=False)
+    centers = data[chosen]
 
     # assign points to centers
     prev_buckets = assign_points(data, centers)
@@ -25,6 +26,7 @@ def kmeans(data, k):
         if buckets == prev_buckets:
             break
         prev_buckets = buckets
+    return centers, objective_func(buckets, data, centers)
 
 # update center based on points in its bucket
 def update_centers(buckets, data):
@@ -68,10 +70,11 @@ def assign_points(data, centers):
         for j in range(1, k):
             dist = np.sqrt(np.sum((data[i,:] - centers[j,:])**2))
             if dist < smallest_dist: # tie breaker or just first one?
+                smallest_dist = dist
                 center = j
         # add to center's group
         buckets[center].append(i)
-
+            
     return buckets
 
 # calculate mean squared error as objective function
