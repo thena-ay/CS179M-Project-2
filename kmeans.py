@@ -84,10 +84,10 @@ def objective_func(buckets, data, centers):
     sq_errors = []
     for i in range(k):
         # mean squared error euclidean distance
-        sq_error = np.average(np.sqrt(np.sum((data[buckets[i],:] - centers[i,:])**2, axis=1))**2)
+        sq_error = np.sum(np.sqrt(np.sum((data[buckets[i],:] - centers[i,:])**2, axis=1))**2)
         sq_errors.append(sq_error)
     sq_errors = np.hstack(sq_errors)
-    return np.average(sq_errors)
+    return np.sum(sq_errors)
 
 if __name__ == '__main__':
     # toy example from cs171
