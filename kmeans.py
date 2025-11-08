@@ -8,8 +8,7 @@ def kmeans(data, k):
         Output:
             k files with cluster locations?
     '''
-    #TODO: more research on kmeans initialization
-    # initialize centers (random points from data set)
+    # initialize centers (Forgy initialization)
     chosen = np.random.choice(data.shape[0], size=k, replace=False)
     centers = data[chosen]
 
