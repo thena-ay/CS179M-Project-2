@@ -4,7 +4,7 @@ import numpy as np
 
 def plot_clusters(buckets, data, centers):
     k = centers.shape[0]
-    plt.figure(figsize=(19.2, 14.4), dpi=100)
+    plt.figure((6,6))
     colors = ['red', 'blue', 'green', 'purple', 'teal', 'orange', 'pink']
     for i in range(k):
         points = data[buckets[i]]
@@ -18,7 +18,7 @@ def plot_clusters(buckets, data, centers):
 def plot_cluster_paths(points, centers, orders, filename):
     centers = np.array(centers)
     k = centers.shape[0]
-    plt.figure(figsize=(19.2, 14.4), dpi=100)
+    plt.figure(figsize=(6,6))
     colors = ['orange', 'blue', 'green', 'purple']
     
     for i in range(k):
