@@ -71,7 +71,7 @@ def main():
 
     # save choices
     for i in range(choice):
-        output_file = f"{input_file}_{choice}_SOLUTION_{final_res[choice-1][i][0]:.0f}.txt"
+        output_file = f"{input_file}_{i+1}_SOLUTION_{final_res[choice-1][i][0]:.0f}.txt"
         print(f"Writing {output_file} to disk")
         np.savetxt(output_file, final_orders[i], fmt="%d")
 
