@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import random
 import os
 from two_opt import two_opt_test as to
+import time
+import random
+from kmeans import kmeans
+from kmeans import assign_points
 
 from validate_file import validate_file as vf
 
@@ -19,6 +23,17 @@ def create_unit_square(n, filename):
         x_or_y = random.randint(0,1)
         coord[x_or_y] = random.random()
         coord[1-x_or_y] = random.randint(0,1)
+    coords = np.array(coords)
+    np.savetxt(filename, coords, delimiter = '   ')
+
+def create_cluster(center, spread, num_points, filename):
+    coords = []
+    for _ in range(num_points):
+        point = [
+            random.gauss(center[0], spread),
+            random.gauss(center[1], spread)
+        ]
+        coords.append(point)
     coords = np.array(coords)
     np.savetxt(filename, coords, delimiter = '   ')
 
@@ -69,7 +84,7 @@ if __name__ == '__main__':
         np.savetxt(f"res/unit_square_optimality/{algo}_{trials}trials_{time}seconds.txt", best_distances, delimiter = '   ')
 
     # run trials for average bsf dist over time
-    if True:
+    if False:
         t = 100 # number of runs
         n = 256
         s = 100
@@ -77,7 +92,7 @@ if __name__ == '__main__':
         distances = []
 
         for i in range(t):
-            datapath = f"ca4663_1290319.txt"
+            datapath = f"rw1621_25051.txt"
             data = vf(datapath, sep = " ")
             dist, order, over_time = to(data, s)
             while len(over_time) < s:
@@ -94,19 +109,19 @@ if __name__ == '__main__':
                 os.remove(f"{output}_trial{i}.txt")
                 os.remove(f"{output}_trial{i}_average.txt")
     
-    # run Kmeans 10 times and take the minimum objective function value and plot it
+    # run Kmeans trial times and take the minimum objective function value and plot it
     if False:
-        maxK = 6
+        maxK = 4
         trials = 10
         datapath = f"ca4663_1290319.txt"
         data = vf(datapath, sep = " ")
+        start_time = time.time()
         best_objs = []
         for k in range(1, maxK + 1):
             best_obj = float('inf')
             best_centers = None
             best_buckets = None
             for t in range(trials):
-                from kmeans import kmeans
                 centers, obj = kmeans(data, k)
                 if obj < best_obj:
                     best_obj = obj
@@ -118,8 +133,44 @@ if __name__ == '__main__':
             best_objs.append(best_obj)
         k_values = list(range(1, maxK + 1))
         plt.plot(k_values, best_objs, marker='o')
-        plt.title(f'K vs Kmeans Min Objective Function Value for {trials} Trials')
+        plt.title(f'K vs Kmeans Min Objective Function Value for {trials} Trials on {datapath}')
         plt.xlabel('K value')
         plt.ylabel('Objective Function Value (Lower is Better)')
         plt.xticks(k_values)
+        end_time = time.time()
+        print(f"Kmeans trials completed in {end_time - start_time} seconds")
+        plt.show()
+    
+    if False:
+        # create clusters
+        random.seed(69)
+        create_cluster([0, 0], 0.5, 100, f"clusters/cluster_static.txt")
+        for i in range(11):
+            create_cluster([0, i*0.5], 0.5, 100, f"clusters/cluster{i}.txt")
+    
+    if True:
+        # compare error between clusters
+        clusters = []
+        cluster_centers = []
+        clusters.append(vf(f"clusters/cluster_static.txt"))
+        cluster_centers.append(np.mean(clusters[0], axis=0))
+        for i in range(11):
+            # load cluster data and get their centers
+            cluster_data = vf(f"clusters/cluster{i}.txt")
+            cluster_center = np.mean(cluster_data, axis=0)
+            print(f"Cluster {i} center: {cluster_center}")
+            clusters.append(cluster_data)
+            cluster_centers.append(cluster_center)
+        errors = []
+        for i in range(11):
+            # calculate error as distance from cluster center
+            combined_data = np.append(clusters[0], clusters[i], axis=0)
+            output_centers, _ = kmeans(combined_data, 2)
+            cluster1_error = np.linalg.norm(min(output_centers[0] - cluster_centers[0], output_centers[1] - cluster_centers[0], key=lambda x: np.linalg.norm(x)))
+            cluster2_error = np.linalg.norm(min(output_centers[0] - cluster_centers[i], output_centers[1] - cluster_centers[i], key=lambda x: np.linalg.norm(x)))
+            errors.append(np.sum(cluster1_error) + np.sum(cluster2_error))
+            
+        dist_btw_clusters = [0.5 * i for i in range(0, 11)]
+        sns.scatterplot(x = clusters[0][:,0], y = clusters[0][:,1], color='blue', marker='o')
+        sns.scatterplot(x = clusters[1][:,0], y = clusters[1][:,1], color='red', marker='o')
         plt.show()

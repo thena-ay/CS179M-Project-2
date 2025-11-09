@@ -29,8 +29,11 @@ def plot_path_taken(data, order, filename):
 def plot_over_time(distances, algorithms, time, trials, scenario):
     plt.figure(figsize=(6,6))
     for distance, algorithm in zip(distances, algorithms):
-        plt.plot(np.arange(0, distance.shape[0]), np.average(distance, axis=0), label = algorithm)
-    plt.title(f'Average best so far distance over {time} seconds, {trials} trials on {scenario} data')
+        # compute the averaged series first, then build an x axis that matches its length
+        y = distance
+        x = np.arange(y.shape[0])
+        plt.plot(x, y, label = algorithm)
+    plt.title(f'Average BSF over {time} seconds, {trials} trials on {scenario} data')
     plt.legend()
     plt.xlabel('Time (seconds)')
     plt.ylabel('Distance(Lower is Better)')
@@ -44,7 +47,7 @@ def plot_different_squares(distances, algorithms, nodes, time, trials):
     for i in distances[0]:
         ideal_dist.append(4)
     ax.plot(nodes, ideal_dist, label = "Ideal Distance", linestyle='--', color='black')
-    title = f'Average best so far distance at {time} seconds, {trials} trials on Unit Square data'
+    title = f'Average BSF distance at {time} seconds, {trials} trials on Unit Square data'
     ax.set_title(title)
     ax.set_xscale('log')
     ax.set_xticks(nodes)
@@ -55,23 +58,24 @@ def plot_different_squares(distances, algorithms, nodes, time, trials):
     ax.set_ylabel('Distance(Lower is Better)')
     plt.show()
 
+
 if __name__ == "__main__":
     algorithms = [
-        "Random Search", 
-        "Nearest Neighbor Search", 
+        # "Random Search", 
+        # "Nearest Neighbor Search", 
         "2-OPT"
         ]
     nodes = [64, 128, 256, 512, 1024]
     # Plot distance over time for 256 Cashew for all algorithms
-    # TO_distances = np.loadtxt("res/distances/TO/100trials_256Cashew_100seconds_trial100.txt")
+    TO_distances = np.loadtxt("100trials_rw1621_25051_100seconds_trial100_average.txt")
     # NNS_distances = np.loadtxt("res/distances/NNS/100trials_256Cashew_100seconds_trial100.txt")
     # RS_distances = np.loadtxt("res/distances/RS/100trials_256Cashew_100seconds_trial100.txt")
-    # distances = [
-    #     RS_distances,
-    #     NNS_distances,
-    #     TO_distances
-    #     ]
-    # plot_over_time(distances, algorithms, 100, 100, "256 Cashew")
+    distances = [
+        # RS_distances,
+        # NNS_distances,
+        TO_distances
+        ]
+    plot_over_time(distances, algorithms, 100, 100, "rw1621_25051")
     # Plot unit square optimality results
     # RS_30trials_20seconds = np.loadtxt("res/unit_square_optimality/RS_30trials_20seconds.txt")
     # NNS_30trials_20seconds = np.loadtxt("res/unit_square_optimality/NNS_30trials_20seconds.txt")
@@ -84,10 +88,10 @@ if __name__ == "__main__":
     # plot_different_squares(distances, algorithms, nodes, 20, 30)
 
     # Plot points and path taken for a specific file
-    unit_square_1024 = np.loadtxt("data/unit_squares/1024/45.txt")
-    NNS_dist, NNS_order = nns(unit_square_1024, period=100)
-    TO_dist, TO_order = to(unit_square_1024, period=100)
-    plot_path_taken(unit_square_1024, NNS_order, "res/path_visuals/unit_square_1024_NNS.png")
-    plot_path_taken(unit_square_1024, TO_order, "res/path_visuals/unit_square_1024_TO.png")
+    # unit_square_1024 = np.loadtxt("data/unit_squares/1024/45.txt")
+    # NNS_dist, NNS_order = nns(unit_square_1024, period=100)
+    # TO_dist, TO_order = to(unit_square_1024, period=100)
+    # plot_path_taken(unit_square_1024, NNS_order, "res/path_visuals/unit_square_1024_NNS.png")
+    # plot_path_taken(unit_square_1024, TO_order, "res/path_visuals/unit_square_1024_TO.png")
 
 

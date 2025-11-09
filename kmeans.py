@@ -1,5 +1,4 @@
 import numpy as np
-from visualization import plot_clusters
 
 def kmeans(data, k):
     '''
