@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 os.remove(f"{output}_trial{i}_average.txt")
     
     # run Kmeans trial times and take the minimum objective function value and plot it
-    if True:
+    if False:
         time_taken = []
         for i in range(100):
             maxK = 4
@@ -172,5 +172,11 @@ if __name__ == '__main__':
             output_centers, _ = kmeans(combined_data, 2)
             cluster1_error = np.linalg.norm(min(output_centers[0] - cluster_centers[0], output_centers[1] - cluster_centers[0], key=lambda x: np.linalg.norm(x)))
             cluster2_error = np.linalg.norm(min(output_centers[0] - cluster_centers[i], output_centers[1] - cluster_centers[i], key=lambda x: np.linalg.norm(x)))
+            
             errors.append(np.sum(cluster1_error) + np.sum(cluster2_error))
+
+    if False:
+        datapath = f"ca4663_1290319.txt"
+        data = vf(datapath, sep = " ")
+        np.savetxt("ca4663_1290319.txt", data, delimiter = '   ')
         
