@@ -110,36 +110,40 @@ if __name__ == '__main__':
                 os.remove(f"{output}_trial{i}_average.txt")
     
     # run Kmeans trial times and take the minimum objective function value and plot it
-    if False:
-        maxK = 4
-        trials = 10
-        datapath = f"ca4663_1290319.txt"
-        data = vf(datapath, sep = " ")
-        start_time = time.time()
-        best_objs = []
-        for k in range(1, maxK + 1):
-            best_obj = float('inf')
-            best_centers = None
-            best_buckets = None
-            for t in range(trials):
-                centers, obj = kmeans(data, k)
-                if obj < best_obj:
-                    best_obj = obj
-                    best_centers = centers
-                    # assign points to buckets for best run
-                    from kmeans import assign_points
-                    best_buckets = assign_points(data, best_centers)
-            print(f"Best objective function value for k={k}: {best_obj}")
-            best_objs.append(best_obj)
-        k_values = list(range(1, maxK + 1))
-        plt.plot(k_values, best_objs, marker='o')
-        plt.title(f'K vs Kmeans Min Objective Function Value for {trials} Trials on {datapath}')
-        plt.xlabel('K value')
-        plt.ylabel('Objective Function Value (Lower is Better)')
-        plt.xticks(k_values)
-        end_time = time.time()
-        print(f"Kmeans trials completed in {end_time - start_time} seconds")
-        plt.show()
+    if True:
+        time_taken = []
+        for i in range(100):
+            maxK = 4
+            trials = 10
+            datapath = f"ca4663_1290319.txt"
+            data = vf(datapath, sep = " ")
+            start_time = time.time()
+            best_objs = []
+            for k in range(1, maxK + 1):
+                best_obj = float('inf')
+                best_centers = None
+                best_buckets = None
+                for t in range(trials):
+                    centers, obj = kmeans(data, k)
+                    if obj < best_obj:
+                        best_obj = obj
+                        best_centers = centers
+                        # assign points to buckets for best run
+                        from kmeans import assign_points
+                        best_buckets = assign_points(data, best_centers)
+                print(f"Best objective function value for k={k}: {best_obj}")
+                best_objs.append(best_obj)
+            # k_values = list(range(1, maxK + 1))
+            # plt.plot(k_values, best_objs, marker='o')
+            # plt.title(f'K vs Kmeans Min Objective Function Value for {trials} Trials on {datapath}')
+            # plt.xlabel('K value')
+            # plt.ylabel('Objective Function Value (Lower is Better)')
+            # plt.xticks(k_values)
+            end_time = time.time()
+            time_taken.append(end_time - start_time)
+            # plt.show()
+        avg_time = sum(time_taken) / len(time_taken)
+        print(f"Average time taken for 1-4 Kmeans with {trials} trials on {datapath}: {avg_time:.2f} seconds")
     
     if False:
         # create clusters
@@ -148,7 +152,7 @@ if __name__ == '__main__':
         for i in range(11):
             create_cluster([0, i*0.5], 0.5, 100, f"clusters/cluster{i}.txt")
     
-    if True:
+    if False:
         # compare error between clusters
         clusters = []
         cluster_centers = []
@@ -169,8 +173,4 @@ if __name__ == '__main__':
             cluster1_error = np.linalg.norm(min(output_centers[0] - cluster_centers[0], output_centers[1] - cluster_centers[0], key=lambda x: np.linalg.norm(x)))
             cluster2_error = np.linalg.norm(min(output_centers[0] - cluster_centers[i], output_centers[1] - cluster_centers[i], key=lambda x: np.linalg.norm(x)))
             errors.append(np.sum(cluster1_error) + np.sum(cluster2_error))
-            
-        dist_btw_clusters = [0.5 * i for i in range(0, 11)]
-        sns.scatterplot(x = clusters[0][:,0], y = clusters[0][:,1], color='blue', marker='o')
-        sns.scatterplot(x = clusters[1][:,0], y = clusters[1][:,1], color='red', marker='o')
-        plt.show()
+        
